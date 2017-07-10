@@ -104,3 +104,4 @@ def notify(status){
       body: """&lt;p&gt;${status}: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]':&lt;/p&gt;
         &lt;p&gt;Check console output at &lt;a href='${env.BUILD_URL}'&gt;${env.JOB_NAME} [${env.BUILD_NUMBER}]&lt;/a&gt;&lt;/p&gt;""",
     )
+}
