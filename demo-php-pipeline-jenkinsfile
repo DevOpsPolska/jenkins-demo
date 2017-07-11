@@ -1,0 +1,48 @@
+environment {
+        RESOUCE_GROUP_NAME = 'cijenkinspipelineRG'
+        LOCATION    = 'westus'
+        POSTGRES_SERVER_NAME = 'serverdb324'
+        USER_LOGIN = 'kslssl'
+        USER_PASSWORD = ''
+    }
+node {
+
+
+    stage('Build') {
+        git 'https://github.com/DevOpsPolska/jenkins-demo.git'
+        echo 'Build end'
+    }
+    stage('Check') {
+    // some block
+    }
+    stage("Deploy database server") {
+        //https://docs.microsoft.com/en-us/azure/postgresql/quickstart-create-server-database-azure-cli
+        sh 'az group create --name $RESOUCE_GROUP_NAME --location $LOCATION'
+        sh 'az postgres server create \
+            --resource-group $RESOURCE_GROUP_NAME \
+            --name $POSTGRES_SERVER_NAME \
+            --location $LOCATION \
+            --admin-user $USER_LOGIN \
+            --admin-password $USER_PASSWORD \
+            --performance-tier Basic \
+            --compute-units 50 \
+            --version 9.6'
+            
+        sh 'az postgres server firewall-rule create \
+            --resource-group $RESOUCE_GROUP_NAME \
+            --server $POSTGRES_SERVER_NAME  \
+            --name AllowAllIps \
+            --start-ip-address 0.0.0.0 \
+            --end-ip-address 255.255.255.255'
+    }
+    stage("Check db"){
+        sh 'az postgres server show \
+        --resource-group $RESOUCE_GROUP_NAME \
+        --name $POSTGRES_SERVER_NAME        
+        
+    }
+    stage("DB Schema creation"){
+        //sudo -u postgres psql -v ON_ERROR_STOP=1 -d my_db < [path_to_file].sql
+        
+    }
+}
